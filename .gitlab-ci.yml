@@ -28,4 +28,4 @@ chart:
     - helm push public/cifs-flex*.tgz registry-hcp
     - rm -f public/*tgz
   only:
-    - master
+    - hanse
