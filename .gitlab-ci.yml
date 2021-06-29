@@ -27,5 +27,3 @@ chart:
     - helm package helm/cifs-flex --destination public
     - helm push public/cifs-flex*.tgz registry-hcp
     - rm -f public/*tgz
-  only:
-    - hanse
