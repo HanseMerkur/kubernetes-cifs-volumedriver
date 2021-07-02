@@ -35,8 +35,8 @@ type returnMsg struct {
 
 // Part of the repsonse that informs the driver's capabilities
 type capabilities struct {
-	Attach          bool
-	FSGroup         bool
+	Attach bool
+	//FSGroup         bool
 	SupportsMetrics bool
 
 	// TODO: Check if these capabilities make sense for this driver.
@@ -46,8 +46,8 @@ type capabilities struct {
 
 // arguments passed by k8 to this driver
 type mounterArgs struct {
-	FsGroup          string `json:"kubernetes.io/mounterArgs.FsGroup"`
-	FsGroupLegacy    string `json:"kubernetes.io/fsGroup"` // k8s prior to 1.15
+	//FsGroup          string `json:"kubernetes.io/mounterArgs.FsGroup"`
+	//FsGroupLegacy    string `json:"kubernetes.io/fsGroup"` // k8s prior to 1.15
 	FsType           string `json:"kubernetes.io/fsType"`
 	PodName          string `json:"kubernetes.io/pod.name"`
 	PodNamespace     string `json:"kubernetes.io/pod.namespace"`
@@ -93,9 +93,9 @@ func unmarshalMounterArgs(s string) (ma mounterArgs) {
 	}
 
 	// If we got fsGroup from the legacy json field, assume k8s prior to 1.15
-	if ma.FsGroupLegacy != "" {
-		ma.FsGroup = ma.FsGroupLegacy
-	}
+	// if ma.FsGroupLegacy != "" {
+	// 	ma.FsGroup = ma.FsGroupLegacy
+	// }
 	return
 }
 
@@ -134,9 +134,9 @@ func createMountCmd(cmdLineArgs []string) (cmd *exec.Cmd) {
 	cmd.Args = append(cmd.Args, "-t")
 	cmd.Args = append(cmd.Args, "cifs")
 
-	if mArgs.FsGroup != "" {
-		optsFinal = append(optsFinal, fmt.Sprintf("uid=%s,gid=%s", mArgs.FsGroup, mArgs.FsGroup))
-	}
+	// if mArgs.FsGroup != "" {
+	// 	optsFinal = append(optsFinal, fmt.Sprintf("uid=%s,gid=%s", mArgs.FsGroup, mArgs.FsGroup))
+	// }
 	if mArgs.ReadWrite != "" {
 		optsFinal = append(optsFinal, mArgs.ReadWrite)
 	}
@@ -201,8 +201,8 @@ func driverMain(args []string) (ret returnMsg) {
 	case "init":
 		log.Println("Driver init")
 		ret.Status = retStatSuccess
-		ret.Capabilities.Attach = false          // this driver does not attach any devices
-		ret.Capabilities.FSGroup = false         // avoids chown/chmod upstream in driver caller
+		ret.Capabilities.Attach = false // this driver does not attach any devices
+		//ret.Capabilities.FSGroup = false         // avoids chown/chmod upstream in driver caller
 		ret.Capabilities.SupportsMetrics = false // there are no metrics
 	case "mount":
 		cmd := createMountCmd(args)
