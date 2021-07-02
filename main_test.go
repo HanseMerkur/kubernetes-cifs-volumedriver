@@ -104,7 +104,7 @@ func TestMountCmdComplete(t *testing.T) {
 		"-t",
 		"cifs",
 		"-o",
-		"uid=33,gid=33,rw,domain=domain123,username=user123,password=pass123,domain=Foo",
+		"rw,domain=domain123,username=user123,password=pass123,domain=Foo",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
@@ -189,7 +189,7 @@ func TestMountCmdWithoutCredentials(t *testing.T) {
 		"-t",
 		"cifs",
 		"-o",
-		"uid=33,gid=33,rw,domain=Foo",
+		"rw,domain=Foo",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
@@ -234,7 +234,7 @@ func TestMountCmdFsGroupLegacy(t *testing.T) {
 		"-t",
 		"cifs",
 		"-o",
-		"uid=33,gid=33,rw,domain=domain123,username=user123,password=pass123,domain=Foo",
+		"rw,domain=domain123,username=user123,password=pass123,domain=Foo",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
@@ -410,7 +410,7 @@ func TestMountCmdWithoutReadWrite(t *testing.T) {
 		"-t",
 		"cifs",
 		"-o",
-		"uid=33,gid=33,domain=domain123,username=user123,password=pass123,domain=Foo",
+		"domain=domain123,username=user123,password=pass123,domain=Foo",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
@@ -452,7 +452,7 @@ func TestMountCmdNoCredentialsAndNoOpts(t *testing.T) {
 		"-t",
 		"cifs",
 		"-o",
-		"uid=33,gid=33,rw",
+		"rw",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
@@ -497,7 +497,7 @@ func TestMountCmdNoReadWrite(t *testing.T) {
 		"-t",
 		"cifs",
 		"-o",
-		"uid=33,gid=33,domain=domain123,username=user123,password=pass123,domain=Foo",
+		"domain=domain123,username=user123,password=pass123,domain=Foo",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
@@ -545,7 +545,7 @@ func TestMountCmdNewline(t *testing.T) {
 		"-t",
 		"cifs",
 		"-o",
-		"uid=33,gid=33,domain=domain123,username=user123,password=pass123",
+		"domain=domain123,username=user123,password=pass123",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
@@ -593,7 +593,7 @@ func TestMountCmdReturn(t *testing.T) {
 		"-t",
 		"cifs",
 		"-o",
-		"uid=33,gid=33,domain=domain123,username=user123,password=pass123",
+		"domain=domain123,username=user123,password=pass123",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
@@ -642,7 +642,7 @@ func TestPassEnvOption(t *testing.T) {
 		"-t",
 		"cifs",
 		"-o",
-		"uid=33,gid=33,domain=domain123,username=user123",
+		"domain=domain123,username=user123",
 		"//fooserver123/test",
 		"/mnt/point",
 	}

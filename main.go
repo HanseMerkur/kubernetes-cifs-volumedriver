@@ -114,7 +114,7 @@ func runCommand(cmd *exec.Cmd) error {
 			if ok && status.ExitStatus() != 32 {
 				// The program has exited with an exit code != 0
 				// Status code 32 means not mounted
-				return errors.Wrapf(err, "Error running cmd [cmd=%s] [response=%s]", cmd, string(b.Bytes()))
+				return errors.Wrapf(err, "Error running cmd [cmd=%s] [response=%s]", cmd, b.String())
 			}
 		} else {
 			return errors.Wrapf(err, "Error waiting for cmd to finish [cmd=%s]", cmd)
