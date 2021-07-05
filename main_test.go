@@ -162,6 +162,81 @@ func TestMountCmdSimplest(t *testing.T) {
 	}
 }
 
+func TestMountCmdLegacySource(t *testing.T) {
+
+	jsonArgs := `{
+	  "kubernetes.io/fsType": "",
+	  "kubernetes.io/pod.name": "nginx-deployment-549ddfb5fc-rnqk8",
+	  "kubernetes.io/pod.namespace": "default",
+	  "kubernetes.io/pod.uid": "bb6b2e46-c80d-4c86-920c-8e08736fa211",
+	  "kubernetes.io/pvOrVolumeName": "test-volume",
+	  "kubernetes.io/serviceAccount.name": "default",
+	  "source": "//fooserver123/test"
+	}`
+
+	args := []string{"/path/to/binary", "mount", "/mnt/point", jsonArgs}
+	mountCmd := createMountCmd(args)
+	if mountCmd == nil {
+		t.Error("Mount command wasn't created")
+	}
+
+	expected := []string{
+		"mount",
+		"-t",
+		"cifs",
+		"//fooserver123/test",
+		"/mnt/point",
+	}
+	if len(mountCmd.Args) != len(expected) {
+		t.Errorf("TestMountCmdLegacySource len: expected %d, actual %d", len(mountCmd.Args), len(expected))
+	}
+
+	for idx := range expected {
+		if mountCmd.Args[idx] != expected[idx] {
+			t.Errorf("TestMountCmdLegacySource[%d]: expected %s, actual %s", idx, expected[idx], mountCmd.Args[idx])
+		}
+	}
+}
+
+func TestMountCmdLegacyMountOptions(t *testing.T) {
+
+	jsonArgs := `{
+	  "kubernetes.io/fsType": "",
+	  "kubernetes.io/pod.name": "nginx-deployment-549ddfb5fc-rnqk8",
+	  "kubernetes.io/pod.namespace": "default",
+	  "kubernetes.io/pod.uid": "bb6b2e46-c80d-4c86-920c-8e08736fa211",
+	  "kubernetes.io/pvOrVolumeName": "test-volume",
+	  "kubernetes.io/serviceAccount.name": "default",
+	  "source": "//fooserver123/test",
+	  "mountOptions": "nounix,iocharset=utf8,noperm,nodfs"
+	}`
+
+	args := []string{"/path/to/binary", "mount", "/mnt/point", jsonArgs}
+	mountCmd := createMountCmd(args)
+	if mountCmd == nil {
+		t.Error("Mount command wasn't created")
+	}
+
+	expected := []string{
+		"mount",
+		"-t",
+		"cifs",
+		"-o",
+		"nounix,iocharset=utf8,noperm,nodfs",
+		"//fooserver123/test",
+		"/mnt/point",
+	}
+	if len(mountCmd.Args) != len(expected) {
+		t.Errorf("TestMountCmdLegacyMountOptions len: expected %d, actual %d", len(mountCmd.Args), len(expected))
+	}
+
+	for idx := range expected {
+		if mountCmd.Args[idx] != expected[idx] {
+			t.Errorf("TestMountCmdLegacyMountOptions[%d]: expected %s, actual %s", idx, expected[idx], mountCmd.Args[idx])
+		}
+	}
+}
+
 func TestMountCmdWithoutCredentials(t *testing.T) {
 
 	jsonArgs := `{

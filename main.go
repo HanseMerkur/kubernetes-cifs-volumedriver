@@ -55,9 +55,11 @@ type mounterArgs struct {
 	PvName           string `json:"kubernetes.io/pvOrVolumeName"`
 	ReadWrite        string `json:"kubernetes.io/readwrite"`
 	ServiceAccount   string `json:"kubernetes.io/serviceAccount.name"`
+	MountOptions     string `json:"mountOptions"`
 	Opts             string `json:"opts"`
 	Server           string `json:"server"`
 	Share            string `json:"share"`
+	Source           string `json:"source"`
 	PasswdMethod     string `json:"passwdMethod"`
 	CredentialDomain string `json:"kubernetes.io/secret/domain"`
 	CredentialUser   string `json:"kubernetes.io/secret/username"`
@@ -156,12 +158,21 @@ func createMountCmd(cmdLineArgs []string) (cmd *exec.Cmd) {
 	}
 	if mArgs.Opts != "" {
 		optsFinal = append(optsFinal, strings.Split(mArgs.Opts, ",")...)
+	} else if mArgs.MountOptions != "" {
+		optsFinal = append(optsFinal, strings.Split(mArgs.MountOptions, ",")...)
 	}
 	if len(optsFinal) > 0 {
 		cmd.Args = append(cmd.Args, "-o", strings.Join(optsFinal, ","))
 	}
 
-	cmd.Args = append(cmd.Args, fmt.Sprintf("//%s%s", mArgs.Server, mArgs.Share))
+	if mArgs.Server != "" && mArgs.Share != "" {
+		cmd.Args = append(cmd.Args, fmt.Sprintf("//%s%s", mArgs.Server, mArgs.Share))
+	} else if mArgs.Source != "" {
+		cmd.Args = append(cmd.Args, mArgs.Source)
+	} else {
+		panic(retMsgInvalidMounterArgs)
+	}
+
 	cmd.Args = append(cmd.Args, cmdLineArgs[2])
 
 	return cmd
