@@ -60,6 +60,7 @@ type mounterArgs struct {
 	Server           string `json:"server"`
 	Share            string `json:"share"`
 	Source           string `json:"source"`
+	PasswdMethod     string `json:"passwdMethod"`
 	CredentialDomain string `json:"kubernetes.io/secret/domain"`
 	CredentialUser   string `json:"kubernetes.io/secret/username"`
 	CredentialPass   string `json:"kubernetes.io/secret/password"`
