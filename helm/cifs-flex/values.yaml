@@ -9,7 +9,7 @@ driver:
 image:
   repository: registry.hanse-merkur.de/wellerl/cifs-flex
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 imagePullSecrets: []
 nameOverride: ""
