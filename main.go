@@ -7,7 +7,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -66,6 +65,15 @@ type mounterArgs struct {
 	CredentialPass   string `json:"kubernetes.io/secret/password"`
 }
 
+func argsContain(args []string, item string) bool {
+	for _, arg := range args {
+		if arg == item {
+			return true
+		}
+	}
+	return false
+}
+
 func unmarshalMounterArgs(s string) (ma mounterArgs) {
 	ma = mounterArgs{}
 	err := json.Unmarshal([]byte(s), &ma)
@@ -113,6 +121,13 @@ func runCommand(cmd *exec.Cmd) error {
 	if err := cmd.Wait(); err != nil {
 		if exiterr, ok := err.(*exec.ExitError); ok {
 			status, ok := exiterr.Sys().(syscall.WaitStatus)
+			if ok && status.ExitStatus() == 13 {
+				// Failed to authenticate against CIFS Server
+				return errors.Wrapf(err, "Permission denied for cmd [cmd=%s] [response=%s]", cmd, b.String())
+			} else if ok && status.ExitStatus() == 5 && argsContain(cmd.Args, "nodfs") {
+				// Input/Output Error with Code 5 plus a nodfs option is almost certainly a DFS-Share failure
+				return errors.Wrapf(err, "Cannot mount a DFS-Share with option nodfs [cmd=%s] [response=%s]", cmd, b.String())
+			}
 			if ok && status.ExitStatus() != 32 {
 				// The program has exited with an exit code != 0
 				// Status code 32 means not mounted
@@ -234,16 +249,12 @@ func driverMain(args []string) (ret returnMsg) {
 }
 
 func main() {
-	// Log to file only if the log file already exists on disk.
-	if _, err := os.Stat(logFileName); err == nil {
-		logfile, err := os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-		if err != nil {
-			log.Printf("WARNING: error opening file: %v", err)
-		}
-		log.SetOutput(logfile)
-	} else {
-		log.SetOutput(ioutil.Discard)
+	// Logging to file on disk. Logfile does not contain auth information
+	logfile, err := os.OpenFile(logFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Printf("WARNING: error opening file: %v", err)
 	}
+	log.SetOutput(logfile)
 
 	m := driverMain(os.Args)
 	jsonString, _ := json.Marshal(m)
