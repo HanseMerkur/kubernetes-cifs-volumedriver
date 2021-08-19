@@ -7,7 +7,7 @@ driver:
   driverName: cifs
 
 image:
-  repository: registry.hanse-merkur.de/wellerl/cifs-flex
+  repository: registry.hanse-merkur.de/hcp/miscellaneous/cifs-flex
   tag: latest
   pullPolicy: Always
 
