@@ -23,7 +23,7 @@ chart:
     - unset https_proxy http_proxy HTTP_PROXY HTTPS_PROXY
     - mkdir -p ./public
     - export no_proxy=hanse-merkur.de,localhost
-    - helm repo add registry-hcp https://${CI_REGISTRY}/chartrepo/wellerl
+    - helm repo add registry-hcp https://${CI_REGISTRY}/chartrepo/hcp
     - helm package helm/cifs-flex --destination public
     - helm push public/cifs-flex*.tgz registry-hcp
     - rm -f public/*tgz
