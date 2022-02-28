@@ -127,10 +127,11 @@ func runCommand(cmd *exec.Cmd) error {
 			} else if ok && status.ExitStatus() == 5 && argsContain(cmd.Args, "nodfs") {
 				// Input/Output Error with Code 5 plus a nodfs option is almost certainly a DFS-Share failure
 				return errors.Wrapf(err, "Cannot mount a DFS-Share with option nodfs [cmd=%s] [response=%s]", cmd, b.String())
+			} else if ok && status.ExitStatus() == 32 {
+				return errors.Wrapf(err, "Could not mount volume. Check parameters [cmd=%s] [response=%s]", cmd, b.String())
 			}
-			if ok && status.ExitStatus() != 32 {
+			if ok && status.ExitStatus() != 0 {
 				// The program has exited with an exit code != 0
-				// Status code 32 means not mounted
 				return errors.Wrapf(err, "Error running cmd [cmd=%s] [response=%s]", cmd, b.String())
 			}
 		} else {
